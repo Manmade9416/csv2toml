@@ -50,7 +50,7 @@ def get_path(path_to_file):
         return None
 
 def get_columns(path_to_file, write_to_file):
-    with open(path_to_file, "r", errors="ignore") as csv_file:
+    with open(path_to_file, "r", errors="replace") as csv_file:
         text = csv.reader(csv_file, skipinitialspace=True)
         columns = next(text)
         columns_count = len(columns)
@@ -73,7 +73,7 @@ def get_columns(path_to_file, write_to_file):
 
 
 def get_rows(path_to_file, nrows, write_to_file):
-    with open(path_to_file, "r", errors="ignore") as csv_file:
+    with open(path_to_file, "r", errors="replace") as csv_file:
         text = csv.reader(csv_file, skipinitialspace=True)
         next(text)
         if write_to_file:
@@ -97,7 +97,7 @@ def get_rows(path_to_file, nrows, write_to_file):
 
 
 def get_range_of_rows(path_to_file, start, stop, write_to_file):
-    with open(path_to_file, "r", errors="ignore") as csv_file:
+    with open(path_to_file, "r", errors="replace") as csv_file:
         text = csv.reader(csv_file, skipinitialspace=True)
         while text.line_num < start:
             curr_row = next(text)
