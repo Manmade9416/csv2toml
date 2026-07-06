@@ -17,7 +17,7 @@ All it does is take the rows in the csv and parse them in a toml like style maki
 
 # Example use cases
 1. help page
-```bash
+```shell
 $ ./csto.py
 usage: csto.py [-h] [-f F] [-r R] [-R R R] [-w]
 
@@ -34,7 +34,7 @@ options:
 ```
 
 2. List all columns in the csv
-```bash
+```shell
 $ ./csto.py -f test.csv
 [columns]
 number_of_columns = 4
@@ -45,7 +45,7 @@ cl3 = label
 ```
 
 3. List 3 rows
-```bash
+```shell
 $ ./csto.py -f test.csv -r 3
 [columns]
 number_of_columns = 4
@@ -77,7 +77,7 @@ col.3 = Blue Hour Label
 ```
 
 4. List a range of rows
-```bash
+```shell
 $ ./csto.py -f test.csv -R 2 5
 [columns]
 number_of_columns = 4
