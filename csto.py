@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import argparse
+from datetime import datetime
 import csv
 import os
 import sys
@@ -38,6 +39,43 @@ def main():
             else:
                 return get_columns(valid_path, args.w), get_rows(valid_path, args.r, args.w)
  
+def format_cols(columns):
+    if columns:
+        result = f"[columns]\nn_cols = {len(columns)}\n"
+        for ii, col in enumerate(columns):
+            result += f"col.{ii} = {col}\n"
+        result += "\n"
+        return result
+    else:
+        return f"No Columns: {columns}"
+
+def format_cols_color(columns):
+    if columns:
+        result = f"{yellow}[columns]{close}\n{blue}n_cols{close} = {green}{len(columns)}{close}\n"
+        for ii, col in enumerate(columns):
+            result += f"{blue}col.{ii}{close} = {green}{col}{close}\n"
+        return result
+    else:
+        return f"{red}No Columns: {columns}{close}"
+
+def format_row(row, i):
+    if row:
+        result = f"[row.{i}]\n"
+        for ii, col in enumerate(row):
+            result += f"col.{ii} = {col}\n"
+        return result
+    else:
+        return f"Empty row: {row}\n"
+
+def format_row_color(row, i):
+    if row:
+        result = f"{yellow}[row.{i}]{close}\n"
+        for ii, col in enumerate(row):
+            result += f"{blue}col.{ii}{close} = {green}{col}{close}\n"
+        return result
+    else:
+        return f"{red}Empty row: {row}{close}\n"
+
 def get_path(path_to_file):
     if "~" in path_to_file:
         path_to_file = path_to_file.replace("~", os.getenv("HOME"))
@@ -49,75 +87,53 @@ def get_path(path_to_file):
     else:
         return None
 
+def create_output(csv_path):
+    output_file = "csv2toml_" + datetime.now().strftime("%Y%m%d%H%M%S") + path.split(csv_path)[1] 
+    output_path = path.split(csv_path)[0] + "/" + output_file + ".toml"
+    return output_path
+
 def get_columns(path_to_file, write_to_file):
     with open(path_to_file, "r", errors="replace") as csv_file:
         text = csv.reader(csv_file, skipinitialspace=True)
         columns = next(text)
-        columns_count = len(columns)
-    
+
     if write_to_file:
-        file_name = path_to_file + ".toml"
-        with open(file_name, "w", encoding="utf-8") as toml_file:
-            if columns:
-                toml_file.write(f"[columns]\nnumber_of_columns = {columns_count}")
-                for ind, column in enumerate(columns):
-                    if column:
-                        toml_file.write(f"\ncl{ind} = {column}")
+        out = create_output(path_to_file)
+        with open(out, "w", encoding="utf-8") as output:
+            output.write(format_cols(columns))
     else:
-        if columns:
-            print(f"{yellow}[columns]{close}\n{blue}number_of_columns{close} = {green}{columns_count}{close}")
-            for ind, column in enumerate(columns):
-                if column:
-                    print(f"{blue}cl{ind}{close} = {green}{column}{close}")
-
-
-
+        print(format_cols_color(columns))
+            
 def get_rows(path_to_file, nrows, write_to_file):
     with open(path_to_file, "r", errors="replace") as csv_file:
         text = csv.reader(csv_file, skipinitialspace=True)
         next(text)
         if write_to_file:
-            file_name = path_to_file + ".toml"
-            with open(file_name, "w", encoding="utf-8") as toml_file:
+            out = create_output(path_to_file)
+            with open(out, "a", encoding="utf-8") as output:
                 for i in range(nrows):
                     curr_row = next(text)
-                    if curr_row:
-                        toml_file.write(f"\n\n[row.{i}]")
-                        for ind, column in enumerate(curr_row):
-                            if column:
-                                toml_file.write(f"\ncol.{ind} = {column}")
+                    output.write(format_row(curr_row, text.line_num))
         else:
             for i in range(nrows):
                 curr_row = next(text)
-                if curr_row:
-                    print(f"\n\n{yellow}[row.{i}]{close}")
-                    for ind, column in enumerate(curr_row):
-                        if column:
-                            print(f"{blue}col.{ind}{close} = {green}{column}{close}")
-
+                print(format_row_color(curr_row, text.line_num))                
 
 def get_range_of_rows(path_to_file, start, stop, write_to_file):
     with open(path_to_file, "r", errors="replace") as csv_file:
         text = csv.reader(csv_file, skipinitialspace=True)
-        while text.line_num < start:
+        while text.line_num <= start:
             curr_row = next(text)
-        while text.line_num <= stop:
-            if write_to_file:
-                file_name = path_to_file + ".toml"
-                with open(file_name, "w", encoding="utf-8") as toml_file:
-                    if curr_row:
-                        toml_file.write(f"\n\n[row.{text.line_num}]")
-                        for ind, column in enumerate(curr_row):
-                            if column:
-                                print(f"\ncol.{ind} = {column}")
+        if write_to_file:
+            out = create_output(path_to_file)
+            with open(out, "a", encoding="utf-8") as output:
+                while text.line_num <= stop:
+                    output.write(format_row(curr_row, text.line_num))
                     curr_row = next(text)
-            else:
-                if curr_row:
-                    print(f"\n\n{yellow}[row.{text.line_num}]{close}")
-                    for ind, column in enumerate(curr_row):
-                        if column:
-                            print(f"{blue}col.{ind}{close} = {green}{column}{close}")
+        else:
+            while text.line_num <= stop:
+                print(format_row_color(curr_row, text.line_num))
                 curr_row = next(text)
-
+                
 if __name__ == "__main__":
     main()
