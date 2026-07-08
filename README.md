@@ -28,9 +28,9 @@ options:
               number of rows in csv it will stop at
               the end
   -R R R      -R {start} {stop} start and stop are
-              the row you want to start at and the                  row to stop at
-  -w          Write to file, file passed to -f with                 be used as file name prepended to
-              '.toml'
+              the row you want to start at and the                        row to stop at
+  -w          Write to file, file passed to -f with
+              be used as file name prepended to '.toml'
 ```
 
 2. List all columns in the csv
@@ -55,21 +55,21 @@ cl2 = date
 cl3 = label
 
 
-[row.0]
+[row.2]
 col.0 = Ariana Grande
 col.1 = Sunrise
 col.2 = 2024-01-12
 col.3 = Cloud Nine Records
 
 
-[row.1]
+[row.3]
 col.0 = The Weeknd
 col.1 = Midnight Drive
 col.2 = 2024-02-03
 col.3 = Starline Music
 
 
-[row.2]
+[row.4]
 col.0 = Lana Del Rey
 col.1 = Velvet Sky
 col.2 = 2024-02-28
